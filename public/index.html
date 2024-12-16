@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.socket.io/4.8.1/socket.io.min.js" integrity="sha384-mkQ3/7FUtcGyoppY6bz/PORYoGqOl7/aSUMn2ymDOJcapfS6PHqxhRTMh1RR0Q6+" crossorigin="anonymous"></script>
+    <title>Document</title>
+</head>
+<body>
+
+    <div id="app">
+        <h2>Creative Chat APP</h2>
+        <div id="chat-window">
+            <div id="output"></div>
+            <div id="feedback"></div>
+        </div>
+        <input type="text" placeholder="Name" id="name">
+        <input type="text" placeholder="Message" id="message">
+        <button id="send" >send</button>
+    </div>
+
+    <script>
+        const socket = io("http://localhost:4000/");
+        let output = document.getElementById("output");
+        let message = document.getElementById("message");
+        let name = document.getElementById("name");
+        let send = document.getElementById("send");
+        let feedback = document.getElementById("feedback");
+
+
+        send.addEventListener('click',()=>{
+            let data = {
+                name : name.value,
+                message : message.value
+            }
+            console.log(name.value, message.value);
+            socket.emit('chat',data);
+
+        })
+
+        message.addEventListener('keypress',()=>{
+            socket.emit("typing", name.value);
+        })
+
+        //listen event
+        socket.on("chat",(data)=>{
+            // console.log(data)
+            output.innerHTML+=`<p><strong>${data.name}<strong> : ${data.message}<p>`
+                name.value="";
+                message.value="";
+                feedback.innerHTML="";
+        })
+        socket.on("typing",(name)=>{
+            feedback.innerHTML = `<p><em>${name} </em>is typing ...</p>`;
+            setTimeout(()=>{
+                feedback.innerHTML="";
+            },3000);
+            // console.log(data)
+            
+        })
+    </script>
+
+    <style>
+     #app {
+    max-width: 500px;
+    margin: 50px auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: #f9f9f9;
+    font-family: Arial, sans-serif;
+}
+
+#app h2 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+#chat-window {
+    height: 300px;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 10px;
+    background-color: #fff;
+    margin-bottom: 20px;
+}
+
+#output {
+    margin-bottom: 10px;
+}
+
+#feedback {
+    color: #999;
+    font-style: italic;
+}
+
+#name, 
+#message {
+    width: calc(100% - 22px);
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+#send {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: #007bff;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+#send:hover {
+    background-color: #0056b3;
+}
+
+#output p {
+    margin: 5px 0;
+}
+    </style>
+</body>
+</html>
