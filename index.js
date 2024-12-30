@@ -5,8 +5,8 @@ let socket = require('socket.io')
 let app = express()
 
 // server setup
-let server=app.listen(4000,()=>{
-    console.log('project is running on localhost 4000')
+let server=app.listen(4500,()=>{
+    console.log('project is running on localhost 4500')
 });
 
 

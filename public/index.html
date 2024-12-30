@@ -20,7 +20,7 @@
     </div>
 
     <script>
-        const socket = io("http://localhost:4000/");
+        const socket = io("http://localhost:4500/");
         let output = document.getElementById("output");
         let message = document.getElementById("message");
         let name = document.getElementById("name");
@@ -38,6 +38,13 @@
 
         })
 
+        message.addEventListener('keydown',(e)=>{
+            if(e.keyCode === 13){
+                send.click();
+            }
+        })
+
+
         message.addEventListener('keypress',()=>{
             socket.emit("typing", name.value);
         })
@@ -45,8 +52,8 @@
         //listen event
         socket.on("chat",(data)=>{
             // console.log(data)
-            output.innerHTML+=`<p><strong>${data.name}<strong> : ${data.message}<p>`
-                name.value="";
+            output.innerHTML+=`<p><strong>${data.name} : </strong> ${data.message}<p>`
+                // name.value="";
                 message.value="";
                 feedback.innerHTML="";
         })
@@ -54,7 +61,7 @@
             feedback.innerHTML = `<p><em>${name} </em>is typing ...</p>`;
             setTimeout(()=>{
                 feedback.innerHTML="";
-            },3000);
+            },4500);
             // console.log(data)
             
         })
